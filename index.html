@@ -68,21 +68,6 @@
             border-color: var(--primary-color);
         }
         
-        .model-select {
-            width: 100%;
-            padding: 0.8rem;
-            margin-top: 1rem;
-            font-size: 1.1rem;
-            border: 2px solid #ddd;
-            border-radius: 30px;
-            outline: none;
-            transition: border 0.3s ease;
-        }
-        
-        .model-select:focus {
-            border-color: var(--primary-color);
-        }
-        
         .search-button {
             background-color: var(--primary-color);
             color: white;
@@ -270,7 +255,7 @@
                 font-size: 1rem;
             }
             
-            .search-box, .model-select {
+            .search-box {
                 font-size: 1rem;
             }
         }
@@ -283,11 +268,6 @@
         
         <div class="search-container">
             <input type="text" id="searchInput" class="search-box" placeholder="Type a simple question..." autofocus>
-            <select id="modelSelect" class="model-select">
-                <option value="gpt-4">GPT-4 (More accurate, slower)</option>
-                <option value="gpt-3.5" selected>GPT-3.5 Turbo (Faster, good enough)</option>
-                <option value="claude">Claude (Alternative AI assistant)</option>
-            </select>
             <button id="searchButton" class="search-button">Generate Link</button>
         </div>
         
@@ -307,47 +287,40 @@
         </div>
         
         <div class="footer">
-            <p>Inspired by "Let Me Google That For You" | Not affiliated with OpenAI or Anthropic</p>
+            <p>Inspired by "Let Me Google That For You" | Not affiliated with OpenAI</p>
         </div>
     </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
-            const modelSelect = document.getElementById('modelSelect');
             const searchButton = document.getElementById('searchButton');
             const chatSimulation = document.getElementById('chatSimulation');
             const chatContent = document.getElementById('chatContent');
-            const chatTitle = document.getElementById('chatTitle');
             const shareUrl = document.getElementById('shareUrl');
             const copyButton = document.getElementById('copyButton');
             
-            // The URL of your serverless function
-            const API_ENDPOINT = 'https://lmaithatforyou.vercel.app/api/llm';
+            // The URL of your serverless function - update this to your domain
+            const API_ENDPOINT = 'https://lmchatgptfy.com/api/llm';
             
             // Check if there are query parameters
             const urlParams = new URLSearchParams(window.location.search);
             const queryParam = urlParams.get('q');
-            const modelParam = urlParams.get('model');
             
             if (queryParam) {
                 // We're in demo mode
                 searchInput.value = decodeURIComponent(queryParam);
-                if (modelParam) {
-                    modelSelect.value = modelParam;
-                }
                 setTimeout(() => {
-                    startSimulation(searchInput.value, modelSelect.value);
+                    startSimulation(searchInput.value);
                 }, 1000);
             }
             
             searchButton.addEventListener('click', function() {
                 const query = searchInput.value.trim();
-                const model = modelSelect.value;
                 if (query) {
                     // Generate and show the URL
                     const currentUrl = window.location.href.split('?')[0];
-                    const newUrl = `${currentUrl}?q=${encodeURIComponent(query)}&model=${encodeURIComponent(model)}`;
+                    const newUrl = `${currentUrl}?q=${encodeURIComponent(query)}`;
                     shareUrl.value = newUrl;
                     shareUrl.style.display = 'block';
                     copyButton.style.display = 'inline-block';
@@ -363,16 +336,8 @@
                 }, 2000);
             });
             
-            async function startSimulation(question, model) {
+            async function startSimulation(question) {
                 chatSimulation.style.display = 'block';
-                
-                // Update chat title based on model
-                if (model === 'claude') {
-                    chatTitle.textContent = 'Claude';
-                    chatTitle.parentElement.querySelector('.chat-logo').style.backgroundColor = '#5436DA';
-                } else {
-                    chatTitle.textContent = model === 'gpt-4' ? 'ChatGPT (GPT-4)' : 'ChatGPT';
-                }
                 
                 // Add user message
                 setTimeout(() => {
@@ -386,11 +351,8 @@
                         const apiConnection = document.createElement('div');
                         apiConnection.className = 'api-connection';
                         
-                        const apiEndpoint = model === 'claude' ? 'Anthropic API' : 'OpenAI API';
-                        const modelName = model === 'claude' ? 'claude-3-sonnet' : model === 'gpt-4' ? 'gpt-4-turbo' : 'gpt-3.5-turbo';
-                        
-                        apiConnection.innerHTML = `<pre>Connecting to ${apiEndpoint}...
-Sending request with model: ${modelName}
+                        apiConnection.innerHTML = `<pre>Connecting to OpenAI API...
+Sending request with model: gpt-3.5-turbo
 Question: "${escapeHTML(question)}"</pre>`;
                         
                         chatContent.appendChild(apiConnection);
@@ -409,8 +371,7 @@ Question: "${escapeHTML(question)}"</pre>`;
                             
                             // Prepare to call the actual API through our serverless function
                             const requestData = {
-                                question: question,
-                                model: model
+                                question: question
                             };
                             
                             // Make the actual API call
@@ -441,7 +402,7 @@ Question: "${escapeHTML(question)}"</pre>`;
                                 
                                 // If API call fails, use fallback responses
                                 console.error('Error:', error);
-                                const fallbackResponse = generateFallbackResponse(question, model);
+                                const fallbackResponse = generateFallbackResponse(question);
                                 
                                 // Add AI message with fallback
                                 const aiMessage = document.createElement('div');
@@ -482,41 +443,18 @@ Question: "${escapeHTML(question)}"</pre>`;
                 }
             }
             
-            function generateFallbackResponse(question, model) {
+            function generateFallbackResponse(question) {
                 // This function generates fallback responses if the API call fails
                 question = question.toLowerCase();
                 
                 // Base response templates - can be expanded
-                const responses = {
-                    'weather': [
-                        "You can check the current weather by looking out a window or using a weather app like AccuWeather, Weather.com, or your phone's built-in weather app. For forecasts, these same resources will provide predictions for the coming days based on meteorological data.",
-                        "To check the weather, you can use any weather app or website such as Weather.com, AccuWeather, or The Weather Channel. These services provide current conditions and forecasts for your location. Most smartphones also have built-in weather apps that can provide this information with a single tap.",
-                        "The easiest way to check the weather is to use a weather app on your smartphone or visit a weather website. Popular options include Weather.com, AccuWeather, or your device's built-in weather app. These will show you current conditions and forecasts for your location. For the most accurate information, you might want to check multiple sources."
-                    ],
-                    'time': [
-                        "You can check the current time by looking at your device's clock, which is typically displayed in the corner of your screen or on your phone's lock screen. Most computers and phones automatically sync with global time servers for accuracy.",
-                        "The current time is displayed on most devices including your computer (usually in the corner of the screen) or on your phone. These devices typically synchronize with atomic clocks over the internet to maintain accuracy. If you need the time for a different location, you can search for 'current time in [location]' in any search engine.",
-                        "To check the time, simply look at the clock on your device - it's usually in the corner of your screen or on your phone's lock screen. Most digital devices synchronize with network time servers to maintain accuracy. If you need to know the time in another time zone, you can use a search engine or the world clock feature on your phone."
-                    ],
-                    'default': [
-                        "That's an interesting question. To find a comprehensive answer, I'd recommend researching this topic through reliable sources. You might start with a Google search, check relevant books or academic papers, or consult with experts in the field related to your question.",
-                        "To answer this question thoroughly, I'd need more context. However, you can find information on this topic through online searches, academic resources, or by consulting subject matter experts. Consider checking reputable websites, scholarly articles, or books that cover this subject area for the most accurate information.",
-                        "This is a nuanced question that deserves a thoughtful answer. The most comprehensive way to explore this topic would be through careful research using credible sources such as academic journals, expert-written books, or authoritative websites in the relevant field. Consider also looking at different perspectives on the issue to form a well-rounded understanding."
-                    ]
-                };
-                
-                // Determine which category to use
-                let category = 'default';
-                if (question.includes('weather')) category = 'weather';
-                else if (question.includes('time')) category = 'time';
-                
-                // Select a response based on the model
-                let responseIndex = 0;
-                if (model === 'gpt-4') responseIndex = 2; // More detailed
-                else if (model === 'gpt-3.5') responseIndex = 1; // Medium detail
-                else if (model === 'claude') responseIndex = Math.floor(Math.random() * 3); // Random for Claude
-                
-                return responses[category][responseIndex];
+                if (question.includes('weather')) {
+                    return "You can check the current weather by looking out a window or using a weather app like AccuWeather or your phone's built-in weather app. For forecasts, these same resources provide predictions based on meteorological data.";
+                } else if (question.includes('time')) {
+                    return "You can check the current time by looking at your device's clock, which is typically displayed in the corner of your screen or on your phone's lock screen. Most devices automatically sync with global time servers for accuracy.";
+                } else {
+                    return "That's an interesting question. To find a comprehensive answer, I'd recommend researching this topic through reliable sources. You might start with a Google search, check relevant books or academic papers, or consult with experts in the field related to your question.";
+                }
             }
             
             function escapeHTML(str) {
