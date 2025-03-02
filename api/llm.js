@@ -1,30 +1,31 @@
 // This file should be placed in /api/llm.js for Vercel
-// For Netlify, place it in /netlify/functions/llm.js
 
 // Vercel handler
 export default async function handler(req, res) {
-  // Only allow POST requests
+  // Add CORS headers for all requests
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Only allow POST requests for actual API calls
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { question, model } = req.body;
+    const { question } = req.body;
 
     if (!question) {
       return res.status(400).json({ error: 'Question is required' });
     }
 
-    // Determine which API to call based on the model
-    let response;
-    
-    if (model === 'claude') {
-      response = await callClaudeAPI(question);
-    } else {
-      // Either gpt-3.5 or gpt-4
-      response = await callOpenAIAPI(question, model);
-    }
-
+    // Call OpenAI API
+    const response = await callOpenAIAPI(question);
     return res.status(200).json({ response });
   } catch (error) {
     console.error('Error processing request:', error);
@@ -32,55 +33,9 @@ export default async function handler(req, res) {
   }
 }
 
-// For Netlify Functions, use this export instead:
-/*
-exports.handler = async function(event, context) {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
-  try {
-    const body = JSON.parse(event.body);
-    const { question, model } = body;
-
-    if (!question) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Question is required' })
-      };
-    }
-
-    // Determine which API to call based on the model
-    let response;
-    
-    if (model === 'claude') {
-      response = await callClaudeAPI(question);
-    } else {
-      // Either gpt-3.5 or gpt-4
-      response = await callOpenAIAPI(question, model);
-    }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ response })
-    };
-  } catch (error) {
-    console.error('Error processing request:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to process request' })
-    };
-  }
-};
-*/
-
-async function callOpenAIAPI(question, model) {
-  // Choose the correct model identifier
-  const modelId = model === 'gpt-4' ? 'gpt-4-turbo' : 'gpt-3.5-turbo';
+async function callOpenAIAPI(question) {
+  // Use GPT-3.5 Turbo by default
+  const modelId = 'gpt-3.5-turbo';
   
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -104,49 +59,17 @@ async function callOpenAIAPI(question, model) {
     
     if (data.error) {
       console.error('OpenAI API error:', data.error);
-      return getFallbackResponse(question, model);
+      return getFallbackResponse(question);
     }
     
     return data.choices[0].message.content.trim();
   } catch (error) {
     console.error('Error calling OpenAI API:', error);
-    return getFallbackResponse(question, model);
+    return getFallbackResponse(question);
   }
 }
 
-async function callClaudeAPI(question) {
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 300,
-        messages: [
-          { role: 'user', content: question }
-        ]
-      })
-    });
-
-    const data = await response.json();
-    
-    if (data.error) {
-      console.error('Claude API error:', data.error);
-      return getFallbackResponse(question, 'claude');
-    }
-    
-    return data.content[0].text;
-  } catch (error) {
-    console.error('Error calling Claude API:', error);
-    return getFallbackResponse(question, 'claude');
-  }
-}
-
-function getFallbackResponse(question, model) {
+function getFallbackResponse(question) {
   question = question.toLowerCase();
   
   // Base fallback responses if API calls fail
