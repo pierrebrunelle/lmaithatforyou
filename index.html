@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let Me ChatGPT That For You</title>
+    <style>
+        :root {
+            --primary-color: #10a37f;
+            --secondary-color: #0f8a6c;
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --chat-bg: #ffffff;
+            --animation-speed: 0.5s;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+        
+        .search-box:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .search-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .chat-container {
+            width: 100%;
+            height: 400px;
+            background-color: var(--chat-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            overflow: hidden;
+            position: relative;
+            text-align: left;
+            display: none;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .chat-logo {
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+        
+        .chat-title {
+            font-weight: 600;
+        }
+        
+        .chat-content {
+            height: calc(100% - 50px);
+            overflow-y: auto;
+        }
+        
+        .message {
+            padding: 0.8rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: #f1f1f1;
+            align-self: flex-end;
+            margin-left: auto;
+            animation: fadeIn var(--animation-speed) ease-out forwards;
+        }
+        
+        .ai-message {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            animation: fadeIn var(--animation-speed) ease-out forwards;
+            display: none;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #333;
+            animation: blink 1s infinite;
+        }
+        
+        .share-section {
+            margin-top: 2rem;
+        }
+        
+        .share-url {
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .copy-button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: none;
+        }
+        
+        .copy-button:hover {
+            background-color: #444;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .search-box {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Let Me ChatGPT That For You</h1>
+        <p class="subtitle">For when your friends need a little help with obvious questions</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Type a simple question..." autofocus>
+            <button id="searchButton" class="search-button">Generate Link</button>
+        </div>
+        
+        <div id="chatSimulation" class="chat-container">
+            <div class="chat-header">
+                <div class="chat-logo"></div>
+                <div class="chat-title">ChatGPT</div>
+            </div>
+            <div class="chat-content" id="chatContent">
+                <!-- Messages will be added here -->
+            </div>
+        </div>
+        
+        <div class="share-section">
+            <input type="text" id="shareUrl" class="share-url" readonly>
+            <button id="copyButton" class="copy-button">Copy Link</button>
+        </div>
+        
+        <div class="footer">
+            <p>Inspired by "Let Me Google That For You" | Not affiliated with OpenAI</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            const chatSimulation = document.getElementById('chatSimulation');
+            const chatContent = document.getElementById('chatContent');
+            const shareUrl = document.getElementById('shareUrl');
+            const copyButton = document.getElementById('copyButton');
+            
+            // Check if there's a query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryParam = urlParams.get('q');
+            
+            if (queryParam) {
+                // We're in demo mode
+                searchInput.value = decodeURIComponent(queryParam);
+                setTimeout(() => {
+                    startSimulation(searchInput.value);
+                }, 1000);
+            }
+            
+            searchButton.addEventListener('click', function() {
+                const query = searchInput.value.trim();
+                if (query) {
+                    // Generate and show the URL
+                    const currentUrl = window.location.href.split('?')[0];
+                    const newUrl = `${currentUrl}?q=${encodeURIComponent(query)}`;
+                    shareUrl.value = newUrl;
+                    shareUrl.style.display = 'block';
+                    copyButton.style.display = 'inline-block';
+                }
+            });
+            
+            copyButton.addEventListener('click', function() {
+                shareUrl.select();
+                document.execCommand('copy');
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy Link';
+                }, 2000);
+            });
+            
+            function startSimulation(question) {
+                chatSimulation.style.display = 'block';
+                
+                // Add user message
+                setTimeout(() => {
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'message user-message';
+                    userMessage.textContent = question;
+                    chatContent.appendChild(userMessage);
+                    
+                    // Show AI is typing
+                    setTimeout(() => {
+                        const aiMessage = document.createElement('div');
+                        aiMessage.className = 'message ai-message';
+                        aiMessage.style.display = 'block';
+                        aiMessage.innerHTML = '<span class="cursor"></span>';
+                        chatContent.appendChild(aiMessage);
+                        
+                        // Generate an appropriate response
+                        const response = generateResponse(question);
+                        typeResponse(aiMessage, response);
+                    }, 1000);
+                }, 1000);
+            }
+            
+            function typeResponse(element, text, index = 0) {
+                if (index < text.length) {
+                    element.innerHTML = text.substring(0, index + 1) + '<span class="cursor"></span>';
+                    setTimeout(() => {
+                        typeResponse(element, text, index + 1);
+                    }, Math.random() * 50 + 30); // Random typing speed for realism
+                } else {
+                    element.innerHTML = text; // Remove cursor at the end
+                }
+            }
+            
+            function generateResponse(question) {
+                // Simple response generation based on the question
+                question = question.toLowerCase();
+                
+                if (question.includes('how') && question.includes('weather')) {
+                    return "You can check the current weather by looking out a window or using a weather app like AccuWeather, Weather.com, or your phone's built-in weather app. For forecasts, these same resources will provide predictions for the coming days based on meteorological data.";
+                } else if (question.includes('how') && question.includes('time')) {
+                    return "You can check the current time by looking at your device's clock, which is typically displayed in the corner of your screen or on your phone's lock screen. Most computers and phones automatically sync with global time servers for accuracy.";
+                } else if (question.includes('what') && question.includes('color')) {
+                    return "Colors are subjective and can vary based on cultural context, personal preference, and even display settings. To determine a specific color, you might use a color picker tool or refer to standard color systems like RGB, CMYK, or Pantone.";
+                } else if (question.includes('meaning of life')) {
+                    return "The meaning of life is a philosophical question that has been debated throughout human history. Different philosophical and religious traditions offer various perspectives. Some suggest it's about happiness, others about fulfilling purpose, and some believe it's something each person must determine for themselves.";
+                } else if (question.includes('how') && question.includes('google')) {
+                    return "To use Google, go to google.com in your web browser, type your query in the search bar, and press Enter or click the search button. Google will then return a list of relevant web pages, images, videos, or other content based on your search terms.";
+                } else {
+                    return "That's an interesting question. To find a comprehensive answer, I'd recommend researching this topic through reliable sources. You might start with a Google search, check relevant books or academic papers, or consult with experts in the field related to your question.";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
