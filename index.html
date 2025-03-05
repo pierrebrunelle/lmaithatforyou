@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Let Me ChatGPT That For You</title>
+    <title>Let Me ChatGPT That For You - Passive-Aggressive AI Responses</title>
+    <meta name="description" content="Generate shareable links to answer obvious questions with AI responses. Perfect for when your friends could have easily asked ChatGPT instead of bothering you.">
+    <meta name="keywords" content="ChatGPT, AI answers, let me google that for you, LMGTFY, AI responses, ChatGPT link generator">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Let Me ChatGPT That For You - Passive-Aggressive AI Responses">
+    <meta property="og:description" content="Generate shareable links to answer obvious questions with AI. Perfect for friends who should know better than to ask you instead of ChatGPT.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lmchatgptfy.com/">
+    <meta property="og:image" content="https://lmchatgptfy.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@pjlbrunelle">
+    <link rel="canonical" href="https://lmchatgptfy.com/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -52,8 +63,17 @@
         
         .subtitle {
             font-size: 1.2rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 0.5rem;
             color: #666;
+        }
+        
+        .seo-description {
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            color: #888;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .search-container {
@@ -63,6 +83,7 @@
             border-radius: var(--border-radius);
             background: white;
             padding: 1.5rem;
+            border: 1px solid #eaeaea;
         }
         
         .search-box {
@@ -117,6 +138,7 @@
             position: relative;
             text-align: left;
             display: none;
+            border: 1px solid #eaeaea;
         }
         
         .chat-header {
@@ -269,6 +291,34 @@
             transform: translateY(-2px);
         }
         
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -70px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
         .footer {
             margin-top: 3.5rem;
             color: #777;
@@ -277,10 +327,34 @@
             text-align: center;
         }
         
+        .features {
+            margin: 2.5rem auto;
+            max-width: 600px;
+            text-align: left;
+        }
+        
+        .features h2 {
+            font-size: 1.3rem;
+            color: #555;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .features ul {
+            padding-left: 1.5rem;
+            color: #666;
+        }
+        
+        .features li {
+            margin-bottom: 0.7rem;
+        }
+        
         .credits {
             margin-top: 1.5rem;
             font-size: 0.8rem;
             color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
         }
         
         .credits a {
@@ -292,6 +366,29 @@
         .credits a:hover {
             color: var(--primary-color);
             text-decoration: underline;
+        }
+        
+        .examples {
+            margin: 1.5rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .example-button {
+            background-color: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .example-button:hover {
+            background-color: #e8e8e8;
+            transform: translateY(-1px);
         }
         
         @keyframes blink {
@@ -336,15 +433,44 @@
             }
         }
     </style>
+    
+    <!-- Structured data for rich search results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Let Me ChatGPT That For You",
+      "url": "https://lmchatgptfy.com/",
+      "description": "Generate shareable links that demonstrate how ChatGPT would answer obvious questions.",
+      "applicationCategory": "UtilityApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      },
+      "operatingSystem": "All",
+      "creator": {
+        "@type": "Person",
+        "name": "Pierre Brunelle",
+        "url": "https://x.com/pjlbrunelle"
+      }
+    }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Let Me ChatGPT That For You</h1>
         <p class="subtitle">For when your friends need a little help with obvious questions</p>
+        <p class="seo-description">Generate shareable links that show how ChatGPT would answer questions that could have been easily asked to AI instead of bothering you.</p>
         
         <div class="search-container">
             <input type="text" id="searchInput" class="search-box" placeholder="Type a simple question..." autofocus>
             <button id="searchButton" class="search-button">Generate Link</button>
+        </div>
+        
+        <div class="examples">
+            <button class="example-button" data-question="What's the weather like today?">Weather example</button>
+            <button class="example-button" data-question="How do I make pancakes?">Pancake recipe</button>
+            <button class="example-button" data-question="What's the capital of France?">Geography fact</button>
         </div>
         
         <div id="chatSimulation" class="chat-container">
@@ -361,15 +487,28 @@
         
         <div class="share-section">
             <input type="text" id="shareUrl" class="share-url" readonly>
-            <button id="copyButton" class="copy-button">Copy Link</button>
+            <div class="tooltip">
+                <button id="copyButton" class="copy-button">Copy Link</button>
+                <span class="tooltiptext">Copy to clipboard</span>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h2>How It Works</h2>
+            <ul>
+                <li>Type a question that someone could have easily asked ChatGPT</li>
+                <li>Generate a shareable link to send to your friend</li>
+                <li>When they click the link, they'll see a simulation of ChatGPT answering their question</li>
+                <li>The perfect passive-aggressive way to remind friends that AI exists for a reason</li>
+            </ul>
         </div>
         
         <div class="footer">
             <p>Inspired by "Let Me Google That For You" | Not affiliated with OpenAI</p>
             <div class="credits">
-                by <a href="https://x.com/pjlbrunelle" target="_blank">Pierre Brunelle</a>, 
-                built with <a href="https://claude.ai/" target="_blank">Claude</a>. 
-                Currently working on <a href="https://github.com/pixeltable/pixeltable" target="_blank">Pixeltable</a>
+                by <a href="https://x.com/pjlbrunelle" target="_blank" rel="noopener">Pierre Brunelle</a>, 
+                built with <a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a>. 
+                Currently working on <a href="https://github.com/pixeltable/pixeltable" target="_blank" rel="noopener">Pixeltable</a>
             </div>
         </div>
     </div>
@@ -382,9 +521,19 @@
             const chatContent = document.getElementById('chatContent');
             const shareUrl = document.getElementById('shareUrl');
             const copyButton = document.getElementById('copyButton');
+            const exampleButtons = document.querySelectorAll('.example-button');
             
             // The URL of your serverless function - update this to your domain
             const API_ENDPOINT = 'https://lmchatgptfy.com/api/llm';
+            
+            // Add click handlers for example buttons
+            exampleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    searchInput.value = question;
+                    searchInput.focus();
+                });
+            });
             
             // Check if there are query parameters
             const urlParams = new URLSearchParams(window.location.search);
@@ -392,9 +541,14 @@
             
             if (queryParam) {
                 // We're in demo mode
-                searchInput.value = decodeURIComponent(queryParam);
+                const decodedQuery = decodeURIComponent(queryParam);
+                
+                // Set the window title to include the question for better SEO
+                document.title = `${decodedQuery} - Let Me ChatGPT That For You`;
+                
+                searchInput.value = decodedQuery;
                 setTimeout(() => {
-                    startSimulation(searchInput.value);
+                    startSimulation(decodedQuery);
                 }, 1000);
             }
             
@@ -412,12 +566,24 @@
             
             copyButton.addEventListener('click', function() {
                 shareUrl.select();
-                document.execCommand('copy');
+                try {
+                    // Modern clipboard API
+                    navigator.clipboard.writeText(shareUrl.value).then(() => {
+                        showCopyFeedback();
+                    });
+                } catch (err) {
+                    // Fallback
+                    document.execCommand('copy');
+                    showCopyFeedback();
+                }
+            });
+            
+            function showCopyFeedback() {
                 copyButton.textContent = 'Copied!';
                 setTimeout(() => {
                     copyButton.textContent = 'Copy Link';
                 }, 2000);
-            });
+            }
             
             // Allow pressing Enter to submit
             searchInput.addEventListener('keyup', function(event) {
@@ -542,6 +708,8 @@ Question: "${escapeHTML(question)}"</pre>`;
                     return "You can check the current weather by looking out a window or using a weather app like AccuWeather or your phone's built-in weather app. For forecasts, these same resources provide predictions based on meteorological data.";
                 } else if (question.includes('time')) {
                     return "You can check the current time by looking at your device's clock, which is typically displayed in the corner of your screen or on your phone's lock screen. Most devices automatically sync with global time servers for accuracy.";
+                } else if (question.includes('recipe') || question.includes('cook') || question.includes('make')) {
+                    return "For recipes and cooking instructions, I'd recommend checking specialized cooking websites like AllRecipes, Food Network, or simply searching for the specific recipe you're looking for. These sources will provide detailed ingredient lists, step-by-step instructions, and often include helpful reviews and tips from others who have tried the recipe.";
                 } else {
                     return "That's an interesting question. To find a comprehensive answer, I'd recommend researching this topic through reliable sources. You might start with a Google search, check relevant books or academic papers, or consult with experts in the field related to your question.";
                 }
@@ -557,5 +725,10 @@ Question: "${escapeHTML(question)}"</pre>`;
             }
         });
     </script>
+    
+    <!-- Semantic HTML5 footer -->
+    <footer>
+        <p>© 2025 Let Me ChatGPT That For You - <a href="/privacy.html">Privacy Policy</a> - <a href="/terms.html">Terms of Service</a></p>
+    </footer>
 </body>
 </html>
